@@ -1,0 +1,463 @@
+{
+  "info": {
+    "name": "Musée des Civilisations Noires API",
+    "description": "Collection Postman pour tester l'API du Musée des Civilisations Noires",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"123456789\",\n  \"pin\": \"1234\",\n  \"name\": \"Test User\",\n  \"role\": \"visitor\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"token\", jsonData.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"771234567\",\n  \"pin\": \"1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Artworks",
+      "item": [
+        {
+          "name": "Get All Artworks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/artworks?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "artworks"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Artwork by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/artworks/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "artworks", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "65f1234567890abcdef12345"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Artwork by QR Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/artworks/qr/MCN-001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "artworks", "qr", "MCN-001"]
+            }
+          }
+        },
+        {
+          "name": "Get Popular Artworks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/artworks/popular?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "artworks", "popular"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Artwork Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/artworks/:id/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "artworks", ":id", "stats"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "65f1234567890abcdef12345"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Artwork",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": {\n    \"fr\": \"Nouvelle Œuvre\",\n    \"en\": \"New Artwork\",\n    \"wo\": \"Liggéey bu Bees\"\n  },\n  \"description\": {\n    \"fr\": \"Description en français\",\n    \"en\": \"Description in English\",\n    \"wo\": \"Description ci wolof\"\n  },\n  \"category\": \"sculpture\",\n  \"period\": \"XXIe siècle\",\n  \"origin\": \"Sénégal\",\n  \"roomId\": \"main-hall\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/artworks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "artworks"]
+            }
+          }
+        },
+        {
+          "name": "Update Artwork",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"period\": \"XXe siècle\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/artworks/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "artworks", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "65f1234567890abcdef12345"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Artwork",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/artworks/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "artworks", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "65f1234567890abcdef12345"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rooms",
+      "item": [
+        {
+          "name": "Get All Rooms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/rooms",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms"]
+            }
+          }
+        },
+        {
+          "name": "Get Room by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/rooms/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "65f1234567890abcdef12345"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Room by RoomId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/rooms/room/main-hall",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms", "room", "main-hall"]
+            }
+          }
+        },
+        {
+          "name": "Create Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roomId\": \"test-room\",\n  \"name\": {\n    \"fr\": \"Salle Test\",\n    \"en\": \"Test Room\",\n    \"wo\": \"Salle Test\"\n  },\n  \"description\": {\n    \"fr\": \"Description test\",\n    \"en\": \"Test description\",\n    \"wo\": \"Description test\"\n  },\n  \"order\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/rooms",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms"]
+            }
+          }
+        },
+        {
+          "name": "Add Artwork to Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"artworkId\": \"65f1234567890abcdef12345\",\n  \"position\": { \"x\": 0, \"y\": 1, \"z\": -5 },\n  \"rotation\": { \"x\": 0, \"y\": 0, \"z\": 0 },\n  \"scale\": { \"x\": 1, \"y\": 1, \"z\": 1 }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/rooms/:id/artworks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rooms", ":id", "artworks"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "65f1234567890abcdef12345"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Visits",
+      "item": [
+        {
+          "name": "Create Visit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"artworkId\": \"65f1234567890abcdef12345\",\n  \"deviceId\": \"test-device-123\",\n  \"duration\": 120,\n  \"language\": \"fr\",\n  \"audioPlayed\": true,\n  \"videoPlayed\": false,\n  \"source\": \"qr-scan\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/visits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "visits"]
+            }
+          }
+        },
+        {
+          "name": "Get Device History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/visits/device/:deviceId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "visits", "device", ":deviceId"],
+              "variable": [
+                {
+                  "key": "deviceId",
+                  "value": "test-device-123"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/visits/user",
+              "host": ["{{base_url}}"],
+              "path": ["api", "visits", "user"]
+            }
+          }
+        },
+        {
+          "name": "Get Global Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/visits/stats/global",
+              "host": ["{{base_url}}"],
+              "path": ["api", "visits", "stats", "global"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+Remove-Item -Recurse -Force node_modules\.cache
+
+
+
+
+
+
+ Prochaines Étapes
+Pages Prioritaires à Créer
+ArtworksPage - Liste des œuvres avec filtres (catégorie, origine, période)
+ArtworkDetailPage - Détails d'une œuvre + audio/vidéo multilingue
+RoomsPage - Liste des salles du musée
+ProfilePage - Profil utilisateur (historique, favoris)
+Quelle page veux-tu que je commence ?
+Option 1 : ArtworksPage (Recommandé)
+
+Grille d'œuvres avec pagination
+Filtres par catégorie, origine, période
+Barre de recherche
+Tri (populaire, récent, alphabétique)
+Option 2 : ArtworkDetailPage
+
+Galerie d'images
+Lecteur audio multilingue
+Informations détaillées
+QR code pour mobile
+Option 3 : RoomsPage
+
+Liste des salles
+Œuvres par salle
+Préparation pour la visite 3D
+Option 4 : ProfilePage
+
+Informations utilisateur
+Historique des visites
+Favoris (si implémenté)
+Quelle page veux-tu que je développe en premier ?

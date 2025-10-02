@@ -1,0 +1,6 @@
+🎉 Base de données initialisée avec succès!
+
+📋 Comptes de test créés:
+   Admin: 771234567 / PIN: 1234
+   Curator: 779876543 / PIN: 5678
+   Visitor: 701112233 / PIN: 9999
