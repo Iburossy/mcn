@@ -82,14 +82,15 @@ const userValidation = {
 // Validations pour les salles virtuelles
 const roomValidation = {
   create: [
-    body('roomId').notEmpty().withMessage('L\'ID de la salle est requis'),
+    // roomId est généré automatiquement, donc optionnel
     body('name.fr').notEmpty().withMessage('Le nom en français est requis'),
-    body('name.en').notEmpty().withMessage('Le nom en anglais est requis'),
-    body('name.wo').notEmpty().withMessage('Le nom en wolof est requis'),
+    body('name.en').optional(),
+    body('name.wo').optional(),
     validate
   ],
   update: [
     param('id').isMongoId().withMessage('ID invalide'),
+    body('name.fr').optional().notEmpty().withMessage('Le nom en français ne peut pas être vide'),
     validate
   ]
 };

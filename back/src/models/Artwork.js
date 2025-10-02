@@ -33,8 +33,7 @@ const artworkSchema = new mongoose.Schema({
     wo: { type: String }
   },
   images: [{
-    type: String,
-    required: true
+    type: String
   }],
   video: {
     type: String,
@@ -97,6 +96,15 @@ const artworkSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true
+});
+
+// Validation: Au moins images OU model3D
+artworkSchema.pre('validate', function(next) {
+  if ((!this.images || this.images.length === 0) && !this.model3D) {
+    next(new Error('Une œuvre doit avoir au moins des images ou un modèle 3D'));
+  } else {
+    next();
+  }
 });
 
 // Index pour la recherche

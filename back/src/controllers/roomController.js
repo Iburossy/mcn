@@ -77,6 +77,27 @@ const getRoomByRoomId = async (req, res, next) => {
 // @access  Private (Admin)
 const createRoom = async (req, res, next) => {
   try {
+    // Générer automatiquement roomId si non fourni
+    if (!req.body.roomId) {
+      // Trouver le dernier roomId
+      const lastRoom = await VirtualRoom.findOne().sort({ createdAt: -1 });
+      
+      if (lastRoom && lastRoom.roomId) {
+        // Extraire le numéro et incrémenter
+        const match = lastRoom.roomId.match(/(\d+)$/);
+        const nextNum = match ? parseInt(match[1]) + 1 : 1;
+        req.body.roomId = `SALLE-${String(nextNum).padStart(2, '0')}`;
+      } else {
+        req.body.roomId = 'SALLE-01';
+      }
+    }
+
+    // Générer automatiquement l'ordre si non fourni
+    if (req.body.order === undefined || req.body.order === null) {
+      const maxOrderRoom = await VirtualRoom.findOne().sort({ order: -1 });
+      req.body.order = maxOrderRoom ? (maxOrderRoom.order || 0) + 1 : 1;
+    }
+
     const room = await VirtualRoom.create(req.body);
 
     res.status(201).json({

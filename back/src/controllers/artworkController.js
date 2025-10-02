@@ -137,10 +137,23 @@ const updateArtwork = async (req, res, next) => {
       });
     }
 
+    // Nettoyer les données avant mise à jour
+    const updateData = { ...req.body };
+    
+    // Si dimensions est une chaîne vide, la convertir en null
+    if (updateData.dimensions === '' || updateData.dimensions === null) {
+      updateData.dimensions = undefined;
+    }
+    
+    // Si materials est une chaîne vide, la convertir en null
+    if (updateData.materials === '' || updateData.materials === null) {
+      updateData.materials = undefined;
+    }
+
     // Mettre à jour les champs
-    Object.keys(req.body).forEach(key => {
-      if (req.body[key] !== undefined) {
-        artwork[key] = req.body[key];
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] !== undefined) {
+        artwork[key] = updateData[key];
       }
     });
 

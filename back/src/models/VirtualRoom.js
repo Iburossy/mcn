@@ -9,13 +9,21 @@ const virtualRoomSchema = new mongoose.Schema({
   },
   name: {
     fr: { type: String, required: true },
-    en: { type: String, required: true },
-    wo: { type: String, required: true }
+    en: { type: String, default: '' },
+    wo: { type: String, default: '' }
   },
   description: {
     fr: { type: String },
     en: { type: String },
     wo: { type: String }
+  },
+  thumbnail: {
+    type: String,
+    default: null
+  },
+  model3D: {
+    type: String,
+    default: null
   },
   model3DUrl: {
     type: String,
