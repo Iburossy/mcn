@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'screens/splash/splash_screen.dart';
 import 'utils/constants.dart';
 import 'providers/auth_provider.dart';
 import 'providers/artwork_provider.dart';
 import 'providers/language_provider.dart';
 import 'providers/favorites_provider.dart';
+import 'l10n/app_localizations.dart';
+import 'screens/splash/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,10 +40,23 @@ class MuseeApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
       ],
-      child: MaterialApp(
-        title: 'Musée des Civilisations Noires',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
+      child: Consumer<LanguageProvider>(
+        builder: (context, languageProvider, child) {
+          return MaterialApp(
+            title: 'MCN',
+            debugShowCheckedModeBanner: false,
+            locale: languageProvider.currentLocale,
+            supportedLocales: const [
+              Locale('fr'),
+              Locale('en'),
+            ],
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            theme: ThemeData(
         primaryColor: AppColors.primary,
         scaffoldBackgroundColor: AppColors.background,
         colorScheme: ColorScheme.fromSeed(
@@ -79,8 +94,10 @@ class MuseeApp extends StatelessWidget {
           filled: true,
           fillColor: Colors.white,
         ),
-        ),
-        home: const SplashScreen(),
+            ),
+            home: const SplashScreen(),
+          );
+        },
       ),
     );
   }

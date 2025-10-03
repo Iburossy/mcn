@@ -86,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                 // Titre
                 const Text(
-                  'Créer un compte',
+                  'Créer un compte MCN',
                   style: AppTextStyles.h2,
                   textAlign: TextAlign.center,
                 ),

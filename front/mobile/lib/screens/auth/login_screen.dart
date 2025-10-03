@@ -6,6 +6,7 @@ import '../../utils/validators.dart';
 import '../../utils/helpers.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/app_logo.dart';
 import '../home/home_screen.dart';
 import 'register_screen.dart';
 
@@ -65,41 +66,34 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                 const SizedBox(height: 40),
-
                 // Logo
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.museum,
-                    size: 50,
-                    color: Colors.white,
-                  ),
+                const AppLogo(
+                  size: 100,
+                  showShadow: true,
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
 
                 // Titre
                 const Text(
-                  'Connexion',
-                  style: AppTextStyles.h1,
+                  'MCN',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
                 const SizedBox(height: 8),
 
                 Text(
-                  'Connectez-vous pour accéder à votre compte',
+                  'Connectez-vous à votre compte',
                   style: AppTextStyles.body2,
                   textAlign: TextAlign.center,
                 ),
 
                 const SizedBox(height: 40),
-
                 // Téléphone
                 CustomTextField(
                   controller: _phoneController,

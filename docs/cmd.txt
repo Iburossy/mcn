@@ -1,6 +1,6 @@
 Remove-Item -Recurse -Force node_modules\.cache
 
-
+flutter pub run flutter_launcher_icons
 
 
 

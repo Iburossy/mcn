@@ -11,6 +11,8 @@ class AppColors {
   static const Color textSecondary = Color(0xFF757575);
   static const Color error = Color(0xFFD32F2F);
   static const Color success = Color(0xFF388E3C);
+  static const Color lightGrey = Color(0xFFE0E0E0);
+  static const Color mediumGrey = Color(0xFFBDBDBD);
 }
 
 /// Configuration API

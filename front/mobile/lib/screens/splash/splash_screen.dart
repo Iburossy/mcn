@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/constants.dart';
 import '../../services/auth_service.dart';
+import '../../widgets/app_logo.dart';
+import '../../l10n/app_localizations.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../auth/login_screen.dart';
 import '../home/home_screen.dart';
@@ -75,6 +77,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: Center(
@@ -85,39 +89,30 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo/Icon
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
+                // Logo
+                const AppLogo(size: 120),
+
+                const SizedBox(height: 24),
+
+                // Nom de l'app
+                Text(
+                  l10n.appName,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.museum,
-                    size: 60,
-                    color: AppColors.primary,
+                    letterSpacing: 2,
                   ),
                 ),
                 
-                const SizedBox(height: 32),
+                const SizedBox(height: 8),
                 
-                // Titre
-                const Text(
-                  'Musée des\nCivilisations Noires',
+                Text(
+                  l10n.appFullName,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    height: 1.2,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
                   ),
                 ),
                 
@@ -125,7 +120,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 
                 // Sous-titre
                 Text(
-                  'Découvrez notre patrimoine',
+                  l10n.discoverHeritage,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white.withValues(alpha: 0.9),

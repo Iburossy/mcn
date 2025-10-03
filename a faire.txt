@@ -1,1 +1,8 @@
 ameliorer les requetes car les oeuvres prennent trop de temps pour se charger.
+
+Maintenant passons a cette etape :
+
+"Remplacer les textes hardcodés dans les écrans par les clés de traduction"
+
+mais tu remplacera "plan" par uen icone de audio; remplacer l'icone de telechargement par une icone de video.
+video et audio doivent etre lun a coter de lautre.
