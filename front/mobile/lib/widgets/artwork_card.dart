@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import '../models/artwork.dart';
-import '../providers/favorites_provider.dart';
+import '../services/cache_service.dart';
 import '../utils/constants.dart';
+import '../providers/favorites_provider.dart';
 
 class ArtworkCard extends StatelessWidget {
   final Artwork artwork;
@@ -123,6 +124,7 @@ class ArtworkCard extends StatelessWidget {
         imageUrl: artwork.primaryImage!,
         fit: BoxFit.cover,
         width: double.infinity,
+        cacheManager: CacheService.customCacheManager,
         placeholder: (context, url) => Container(
           color: Colors.grey[200],
           child: const Center(

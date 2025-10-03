@@ -44,11 +44,23 @@ dependencies:
   http: ^1.2.0
   dio: ^5.4.0
   
-  # Storage
+  # Storage & Cache
   shared_preferences: ^2.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.2
   
-  # Image
+  # Image Cache
   cached_network_image: ^3.3.1
+  flutter_cache_manager: ^3.3.1
+  
+  # Video Player
+  video_player: ^2.8.2
+  chewie: ^1.7.5
+  
+  # Audio Player
+  audioplayers: ^6.0.0
+  just_audio: ^0.9.36
   
   # Smooth Page Indicator (pour onboarding)
   smooth_page_indicator: ^1.1.0
@@ -61,6 +73,9 @@ dependencies:
   
   # Logger
   logger: ^2.0.2
+  
+  # URL Launcher (pour ouvrir maps, téléphone, email)
+  url_launcher: ^6.2.4
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +94,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true  # Active la génération automatique des fichiers de localisation
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

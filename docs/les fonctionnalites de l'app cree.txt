@@ -1,0 +1,18 @@
+les fonctionnalitées attendue par les jurys que j'ai implementees :
+
+
+3. Fonctionnalités principales attendues 
+
+● Scan des œuvres via QR Code → redirection vers une fiche descriptive complète 
+(texte, audio, vidéo). pas encore faite .
+
+● Descriptions multilingues (Français, Anglais, Wolof). FAITES 
+● Consultation des œuvres directement depuis un site web ou une application (PC, 
+mobile). FAITES
+
+● Option d’écoute audio de la description pour une expérience plus inclusive. FAITES
+
+● Accès à l’historique et aux informations culturelles liées à chaque œuvre. FAITES
+
+● Expérience fluide et accessible pour les visiteurs à distance (expérience digitale 
+même hors du musée). 

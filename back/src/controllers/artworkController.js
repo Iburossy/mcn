@@ -3,6 +3,7 @@ const VisitHistory = require('../models/VisitHistory');
 const { uploadToCloudinary, deleteFromCloudinary } = require('../config/cloudinary');
 const { generateQRCode, generateQRCodeBase64, generateUniqueQRId } = require('../utils/qrGenerator');
 const { getPagination, formatPaginatedResponse, extractCloudinaryPublicId } = require('../utils/helpers');
+const { events } = require('../config/websocket');
 
 // @desc    Récupérer toutes les œuvres
 // @route   GET /api/artworks
@@ -113,6 +114,9 @@ const createArtwork = async (req, res, next) => {
     artwork.qrCodeImage = qrCodeImageUrl;
     await artwork.save();
 
+    // Notifier les clients WebSocket
+    events.artworkCreated(artwork);
+
     res.status(201).json({
       success: true,
       message: 'Œuvre créée avec succès',
@@ -158,6 +162,9 @@ const updateArtwork = async (req, res, next) => {
     });
 
     await artwork.save();
+
+    // Notifier les clients WebSocket
+    events.artworkUpdated(artwork);
 
     res.json({
       success: true,

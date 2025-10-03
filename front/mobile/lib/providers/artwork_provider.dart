@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/artwork.dart';
 import '../services/artwork_service.dart';
+import '../services/cache_service.dart';
 
 class ArtworkProvider with ChangeNotifier {
   final ArtworkService _artworkService = ArtworkService();
@@ -26,6 +27,8 @@ class ArtworkProvider with ChangeNotifier {
     if (refresh) {
       _currentPage = 1;
       _artworks.clear();
+      // Invalider le cache pour forcer le rechargement depuis l'API
+      await CacheService.invalidateArtworksList();
     }
 
     if (_isLoading || _isLoadingMore) return;
@@ -44,6 +47,7 @@ class ArtworkProvider with ChangeNotifier {
         limit: 20,
         category: _selectedCategory,
         search: _searchQuery,
+        forceRefresh: refresh, // Forcer le rechargement depuis l'API
       );
 
       if (result['success']) {

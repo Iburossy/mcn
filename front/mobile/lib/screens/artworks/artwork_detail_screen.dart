@@ -3,11 +3,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import '../../models/artwork.dart';
 import '../../services/artwork_service.dart';
+import '../../services/cache_service.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/favorites_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../utils/constants.dart';
 import '../../utils/helpers.dart';
+import '../video/video_player_screen.dart';
+import '../../widgets/compact_audio_player.dart';
 
 class ArtworkDetailScreen extends StatefulWidget {
   final String artworkId;
@@ -27,6 +30,7 @@ class _ArtworkDetailScreenState extends State<ArtworkDetailScreen> {
   bool _isLoading = true;
   String? _error;
   int _currentImageIndex = 0;
+  bool _isDescriptionExpanded = false;
 
   @override
   void initState() {
@@ -144,19 +148,13 @@ class _ArtworkDetailScreenState extends State<ArtworkDetailScreen> {
 
                 const SizedBox(height: 24),
 
-                // Boutons Audio, Vidéo et Traduction
+                // Boutons Audio, Vidéo, Traduction et Modèle 3D
                 _buildActionBar(l10n, language),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
                 // Description
-                _buildSection(
-                  l10n.description,
-                  Text(
-                    _artwork!.getDescription(language),
-                    style: AppTextStyles.body1.copyWith(height: 1.6),
-                  ),
-                ),
+                _buildDescriptionSection(l10n, language),
 
                 const SizedBox(height: 24),
 
@@ -173,25 +171,6 @@ class _ArtworkDetailScreenState extends State<ArtworkDetailScreen> {
                       style: AppTextStyles.body1.copyWith(height: 1.6),
                     ),
                   ),
-                ],
-
-                // Modèle 3D (si disponible)
-                if (_artwork!.model3D != null) ...[
-                  const SizedBox(height: 24),
-                  _buildMediaCard(
-                    icon: Icons.view_in_ar,
-                    title: l10n.model3D,
-                    color: Colors.green,
-                    onTap: () {
-                      Helpers.showInfo(context, 'Visualisation 3D à venir');
-                    },
-                  ),
-                ],
-
-                // QR Code
-                if (_artwork!.qrCode != null) ...[
-                  const SizedBox(height: 24),
-                  _buildQRCodeSection(l10n),
                 ],
 
                 const SizedBox(height: 32),
@@ -224,6 +203,7 @@ class _ArtworkDetailScreenState extends State<ArtworkDetailScreen> {
             return CachedNetworkImage(
               imageUrl: _artwork!.images[index],
               fit: BoxFit.cover,
+              cacheManager: CacheService.customCacheManager,
               placeholder: (context, url) => Container(
                 color: Colors.grey[200],
                 child: const Center(child: CircularProgressIndicator()),
@@ -288,42 +268,55 @@ class _ArtworkDetailScreenState extends State<ArtworkDetailScreen> {
   }
 
   Widget _buildActionBar(AppLocalizations l10n, String language) {
-    final hasAudio = _artwork!.getAudioGuide(language) != null || _artwork!.getAudio(language) != null;
+    final audioUrl = _artwork!.getAudioGuide(language) ?? _artwork!.getAudio(language);
     final hasVideo = _artwork!.getVideoGuide(language) != null || _artwork!.video != null;
+    final has3DModel = _artwork!.model3D != null;
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Bouton Audio (icône seule)
-        if (hasAudio)
-          _buildIconButton(
-            icon: Icons.headphones,
-            color: AppColors.primary,
-            onTap: () {
-              // TODO: Lire l'audio
-              Helpers.showInfo(context, 'Lecture audio à venir');
-            },
-          ),
+        // Lecteur audio compact (sur sa propre ligne)
+        if (audioUrl != null) ...[
+          CompactAudioPlayer(audioUrl: audioUrl),
+          const SizedBox(height: 12),
+        ],
 
-        if (hasAudio) const SizedBox(width: 12),
+        // Ligne avec Vidéo, Traduction et Modèle 3D
+        Row(
+          children: [
+            // Bouton Vidéo (icône seule)
+            if (hasVideo) ...[
+              _buildIconButton(
+                icon: Icons.videocam,
+                color: AppColors.secondary,
+                onTap: () => _playVideo(context, language),
+              ),
+              const SizedBox(width: 12),
+            ],
 
-        // Bouton Vidéo (icône seule)
-        if (hasVideo)
-          _buildIconButton(
-            icon: Icons.videocam,
-            color: AppColors.secondary,
-            onTap: () {
-              // TODO: Lire la vidéo
-              Helpers.showInfo(context, 'Lecture vidéo à venir');
-            },
-          ),
+            // Bouton Traduction/Langue
+            _buildIconButton(
+              icon: Icons.translate,
+              color: AppColors.accent,
+              onTap: () => _showLanguageSelector(context),
+            ),
 
-        if (hasAudio || hasVideo) const SizedBox(width: 12),
+            if (has3DModel) const SizedBox(width: 12),
 
-        // Bouton Traduction/Langue
-        _buildIconButton(
-          icon: Icons.translate,
-          color: AppColors.accent,
-          onTap: () => _showLanguageSelector(context),
+            // Bouton Modèle 3D avec texte
+            if (has3DModel)
+              Expanded(
+                child: _buildTextIconButton(
+                  icon: Icons.view_in_ar,
+                  label: l10n.virtualTour,
+                  color: Colors.green,
+                  onTap: () {
+                    // TODO: Afficher le modèle 3D
+                    Helpers.showInfo(context, 'Visualisation 3D à venir');
+                  },
+                ),
+              ),
+          ],
         ),
       ],
     );
@@ -344,6 +337,63 @@ class _ArtworkDetailScreenState extends State<ArtworkDetailScreen> {
           width: 56,
           height: 56,
           child: Icon(icon, color: Colors.white, size: 28),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextIconButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: color,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 56,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 24),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _playVideo(BuildContext context, String language) {
+    final videoUrl = _artwork!.getVideoGuide(language) ?? _artwork!.video;
+    
+    if (videoUrl == null) {
+      Helpers.showError(context, 'Aucune vidéo disponible');
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPlayerScreen(
+          videoUrl: videoUrl,
+          title: _artwork!.getTitle(language),
         ),
       ),
     );
@@ -462,6 +512,41 @@ class _ArtworkDetailScreenState extends State<ArtworkDetailScreen> {
     );
   }
 
+  Widget _buildDescriptionSection(AppLocalizations l10n, String language) {
+    final description = _artwork!.getDescription(language);
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.description, style: AppTextStyles.h2),
+        const SizedBox(height: 12),
+        Text(
+          description,
+          style: AppTextStyles.body1.copyWith(height: 1.6),
+          maxLines: _isDescriptionExpanded ? null : 2,
+          overflow: _isDescriptionExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+        ),
+        if (description.length > 100) ...[
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isDescriptionExpanded = !_isDescriptionExpanded;
+              });
+            },
+            child: Text(
+              _isDescriptionExpanded ? 'Voir moins' : 'Voir plus',
+              style: AppTextStyles.body2.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
   Widget _buildSection(String title, Widget content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -470,73 +555,6 @@ class _ArtworkDetailScreenState extends State<ArtworkDetailScreen> {
         const SizedBox(height: 12),
         content,
       ],
-    );
-  }
-
-  Widget _buildMediaCard({
-    required IconData icon,
-    required String title,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      elevation: 2,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 28),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  title,
-                  style: AppTextStyles.h3,
-                ),
-              ),
-              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQRCodeSection(AppLocalizations l10n) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Text('QR Code', style: AppTextStyles.h2),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.qr_code, size: 120, color: AppColors.primary),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Scannez ce code dans le musée',
-              style: AppTextStyles.body2,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 

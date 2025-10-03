@@ -1,3 +1,5 @@
+import '../utils/constants.dart';
+
 class Artwork {
   final String id;
   final String artworkId;
@@ -53,7 +55,7 @@ class Artwork {
       period: json['period'] ?? '',
       category: json['category'] ?? '',
       origin: json['origin'] ?? '',
-      images: List<String>.from(json['images'] ?? []),
+      images: _processImageUrls(List<String>.from(json['images'] ?? [])),
       audio: json['audio'] != null 
           ? Map<String, String>.from(json['audio']) 
           : null,
@@ -147,5 +149,21 @@ class Artwork {
   // Obtenir la première image
   String? get primaryImage {
     return images.isNotEmpty ? images.first : null;
+  }
+
+  // Convertir les URLs relatives en URLs absolues
+  static List<String> _processImageUrls(List<String> urls) {
+    final baseUrl = ApiConfig.baseUrl.replaceAll('/api', '');
+    
+    return urls.map((url) {
+      // Si l'URL commence par http:// ou https://, elle est déjà absolue
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+      }
+      // Sinon, ajouter le baseUrl
+      // Supprimer le slash initial si présent pour éviter les doubles slashes
+      final cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+      return '$baseUrl/$cleanUrl';
+    }).toList();
   }
 }

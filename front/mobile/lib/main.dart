@@ -8,11 +8,15 @@ import 'providers/auth_provider.dart';
 import 'providers/artwork_provider.dart';
 import 'providers/language_provider.dart';
 import 'providers/favorites_provider.dart';
+import 'services/cache_service.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/splash/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialiser le cache
+  await CacheService.init();
   
   // Charger les variables d'environnement
   await dotenv.load(fileName: ".env");

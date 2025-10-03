@@ -29,6 +29,23 @@ class ApiConfig {
   static String get debugUrl => baseUrl;
 }
 
+/// Localisation du Musée des Civilisations Noires
+class MuseumLocation {
+  static const String name = 'Musée des Civilisations Noires';
+  static const String address = 'Route de l\'aéroport, Dakar, Sénégal';
+  static const double latitude = 14.7167; // Coordonnées du MCN Dakar
+  static const double longitude = -17.4677;
+  static const String phone = '+221 33 849 74 00';
+  static const String email = 'contact@mcn.sn';
+  
+  // URL pour ouvrir dans Google Maps / Apple Maps
+  static String get googleMapsUrl => 
+    'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+  
+  static String get appleMapsUrl => 
+    'https://maps.apple.com/?q=$latitude,$longitude';
+}
+
 /// Clés de stockage local
 class StorageKeys {
   static const String onboardingComplete = 'onboarding_complete';

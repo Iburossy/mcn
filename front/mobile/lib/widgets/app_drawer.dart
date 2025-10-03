@@ -4,6 +4,7 @@ import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/language_provider.dart';
 import '../screens/settings/language_selection_screen.dart';
+import '../screens/about/about_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -51,11 +52,9 @@ class AppDrawer extends StatelessWidget {
                     title: l10n.about,
                     onTap: () {
                       Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.featureComingSoon),
-                          backgroundColor: AppColors.primary,
-                          duration: const Duration(seconds: 2),
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const AboutScreen(),
                         ),
                       );
                     },

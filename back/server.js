@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const connectDB = require('./src/config/database');
 const { initializeFirebaseApp } = require('./src/config/firebase');
 const { errorHandler, notFound } = require('./src/middleware/errorHandler');
+const { initWebSocket } = require('./src/config/websocket');
 
 // Connexion à la base de données
 connectDB();
@@ -89,13 +90,12 @@ app.use(notFound);
 // Middleware de gestion des erreurs
 app.use(errorHandler);
 
-// Démarrage du serveur
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🏛️  Musée des Civilisations Noires - API Backend      ║
+║   🏛️  MUSÉE DES CIVILISATIONS NOIRES - API              ║
 ║                                                           ║
 ║   🚀 Serveur démarré avec succès                         ║
 ║   📡 Port: ${PORT}                                        ║
@@ -104,6 +104,9 @@ const server = app.listen(PORT, () => {
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
   `);
+  
+  // Initialiser WebSocket
+  initWebSocket(server);
 });
 
 // Gestion des erreurs non capturées
