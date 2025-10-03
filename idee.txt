@@ -1,6 +1,0 @@
-noublie pas la mise en cache pour minimiser la consommation de bande passante.
-websocket pour la communication en temps reel en cas de mise a jours.
-ajoute un menu burger pour les petits ecran
-
-
-au lieu d'avoir des cards pour les oeuvres dans une salle, creer virtuellement la salle et place les oeuvres dans la salle comme des cadres de photo accrocher a un mur, pouvoir se deplacer dans la salle, interagir avec les oeuvres.
